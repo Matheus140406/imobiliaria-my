@@ -1,8 +1,10 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { getImoveisDisponiveis, getImoveisVendidos } from "@/lib/imoveis";
 import { whatsappLink } from "@/lib/format";
 import { Navbar } from "@/components/Navbar";
 import { AvisoImovelIndisponivel } from "@/components/AvisoImovelIndisponivel";
+import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { Hero } from "@/components/Hero";
 import { Sobre } from "@/components/Sobre";
 import { Servicos } from "@/components/Servicos";
@@ -17,6 +19,20 @@ import { RevealObserver } from "@/components/RevealObserver";
 
 const MENSAGEM_GERAL =
   "Olá! Tudo bem? 😊\n\nEntrei em contato pois tenho interesse em conhecer os imóveis disponíveis na Imobiliária M&Y.\n\nPoderia me apresentar as opções e me dar mais informações sobre valores e condições?";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const disponiveis = await getImoveisDisponiveis();
+  const capa = disponiveis[0]?.midias
+    ?.filter((m) => m.tipo === "imagem")
+    .sort((a, b) => a.ordem - b.ordem)[0];
+
+  if (!capa) return {};
+
+  return {
+    openGraph: { images: [{ url: capa.url }] },
+    twitter: { images: [capa.url] },
+  };
+}
 
 export default async function Home() {
   const [disponiveis, vendidos] = await Promise.all([
@@ -59,6 +75,10 @@ export default async function Home() {
 
   return (
     <>
+      <SeoJsonLd
+        whatsapp={contatoGeral?.whatsapp}
+        imoveis={[...disponiveis, ...vendidos]}
+      />
       <RevealObserver />
       <Suspense fallback={null}>
         <AvisoImovelIndisponivel />
