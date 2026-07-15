@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import styles from "./Depoimentos.module.css";
 
 const LOCAL = "Águas Lindas de Goiás, GO";
@@ -113,8 +116,43 @@ function iniciaisDoNome(nome: string) {
 }
 
 const DEPOIMENTOS_LOOP = [...DEPOIMENTOS, ...DEPOIMENTOS];
+const VELOCIDADE_PX_POR_FRAME = 0.6;
 
 export function Depoimentos() {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    const reduzMovimento = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduzMovimento) return;
+
+    let frameId: number;
+
+    function tick() {
+      if (wrapper) {
+        wrapper.scrollLeft += VELOCIDADE_PX_POR_FRAME;
+        const metade = wrapper.scrollWidth / 2;
+        if (wrapper.scrollLeft >= metade) {
+          wrapper.scrollLeft -= metade;
+        }
+      }
+      frameId = requestAnimationFrame(tick);
+    }
+
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, []);
+
+  function mover(direcao: 1 | -1) {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    wrapper.scrollLeft += direcao * 356;
+  }
+
   return (
     <section className={styles.section} id="depoimentos">
       <div className={`${styles.header} reveal`}>
@@ -126,22 +164,45 @@ export function Depoimentos() {
           Histórias reais de famílias que realizaram o sonho com a M&amp;Y.
         </p>
       </div>
-      <div className={styles.marqueeWrapper}>
-        <div className={styles.marqueeTrack}>
-          {DEPOIMENTOS_LOOP.map((d, i) => (
-            <div key={`${d.nome}-${i}`} className={styles.card}>
-              <div className={styles.stars}>★★★★★</div>
-              <p className={styles.quoteText}>{d.texto}</p>
-              <div className={styles.author}>
-                <div className={styles.avatar}>{iniciaisDoNome(d.nome)}</div>
-                <div>
-                  <div className={styles.name}>{d.nome}</div>
-                  <div className={styles.location}>{LOCAL}</div>
+
+      <div className={styles.carouselWrap}>
+        <button
+          type="button"
+          onClick={() => mover(-1)}
+          aria-label="Ver depoimentos anteriores"
+          className={styles.arrowBtn}
+          style={{ left: "1rem" }}
+        >
+          ‹
+        </button>
+
+        <div ref={wrapperRef} className={styles.marqueeWrapper}>
+          <div className={styles.marqueeTrack}>
+            {DEPOIMENTOS_LOOP.map((d, i) => (
+              <div key={`${d.nome}-${i}`} className={styles.card}>
+                <div className={styles.stars}>★★★★★</div>
+                <p className={styles.quoteText}>{d.texto}</p>
+                <div className={styles.author}>
+                  <div className={styles.avatar}>{iniciaisDoNome(d.nome)}</div>
+                  <div>
+                    <div className={styles.name}>{d.nome}</div>
+                    <div className={styles.location}>{LOCAL}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
+        <button
+          type="button"
+          onClick={() => mover(1)}
+          aria-label="Ver mais depoimentos"
+          className={styles.arrowBtn}
+          style={{ right: "1rem" }}
+        >
+          ›
+        </button>
       </div>
     </section>
   );

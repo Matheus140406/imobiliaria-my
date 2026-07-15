@@ -44,9 +44,17 @@
   font-weight: 300;
 }
 
+.carouselWrap {
+  position: relative;
+}
+
 .marqueeWrapper {
   width: 100%;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   -webkit-mask-image: linear-gradient(
     90deg,
     transparent 0%,
@@ -63,20 +71,49 @@
   );
 }
 
+.marqueeWrapper::-webkit-scrollbar {
+  display: none;
+}
+
 .marqueeTrack {
   display: flex;
   width: max-content;
   gap: 1.5rem;
   padding: 0 1.5rem;
-  animation: marquee 90s linear infinite;
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
+.arrowBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 164, 74, 0.4);
+  background: #fff;
+  color: #0d1a12;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.arrowBtn:hover {
+  background: #c8a44a;
+  color: #fff;
+  transform: translateY(-50%) scale(1.08);
+}
+
+@media (max-width: 640px) {
+  .arrowBtn {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
   }
 }
 
@@ -149,10 +186,4 @@
 .location {
   font-size: 0.8rem;
   color: #6b6b5e;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marqueeTrack {
-    animation-play-state: paused;
-  }
 }
