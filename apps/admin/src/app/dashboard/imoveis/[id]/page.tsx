@@ -45,6 +45,7 @@ export default async function EditarImovelPage({
         imovel={imovel}
         corretorAtual={corretorAtual}
         corretores={corretores}
+        midiasIniciais={midias ?? []}
       />
       <MediaManager imovelId={imovel.id} midiasIniciais={midias ?? []} />
     </div>

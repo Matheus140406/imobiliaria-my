@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@imobiliaria/db/client";
@@ -14,6 +14,7 @@ import {
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { StatusToggle } from "@/components/StatusToggle";
 import { BotaoVoltar } from "@/components/BotaoVoltar";
+import { PropertyPreview, type FotoPreview } from "@/components/PropertyPreview";
 import {
   buscarEnderecoPorCep,
   formatarCep,
@@ -36,10 +37,12 @@ export function ImovelForm({
   imovel,
   corretorAtual,
   corretores,
+  midiasIniciais = [],
 }: {
   imovel?: Tables<"imoveis">;
   corretorAtual: Tables<"corretores">;
   corretores: Corretor[];
+  midiasIniciais?: Pick<Tables<"midias">, "url" | "tipo">[];
 }) {
   const router = useRouter();
   const isAdmin = corretorAtual.papel === "admin";
@@ -61,11 +64,32 @@ export function ImovelForm({
   const [cep, setCep] = useState("");
   const [buscandoCep, setBuscandoCep] = useState(false);
   const [erroCep, setErroCep] = useState<string | null>(null);
+  const [mostrarPreview, setMostrarPreview] = useState(false);
 
   const [salvando, setSalvando] = useState(false);
   const [etapa, setEtapa] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [offlineQueued, setOfflineQueued] = useState(false);
+
+  const novasFotosUrls = useMemo<FotoPreview[]>(
+    () =>
+      arquivos.map((arquivo) => ({
+        url: URL.createObjectURL(arquivo),
+        tipo: arquivo.type.startsWith("video") ? "video" : "imagem",
+      })),
+    [arquivos],
+  );
+
+  useEffect(() => {
+    return () => {
+      novasFotosUrls.forEach((u) => URL.revokeObjectURL(u.url));
+    };
+  }, [novasFotosUrls]);
+
+  const fotosPreview: FotoPreview[] = [
+    ...midiasIniciais.map((m) => ({ url: m.url, tipo: m.tipo as "imagem" | "video" })),
+    ...novasFotosUrls,
+  ];
 
   const sujo = editando
     ? titulo !== (imovel?.titulo ?? "") ||
@@ -495,17 +519,38 @@ export function ImovelForm({
 
       {erro && <p className="text-sm text-red-600">{erro}</p>}
 
-      <button
-        type="submit"
-        disabled={salvando}
-        className="w-full rounded-lg bg-neutral-900 px-4 py-4 text-lg font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
-      >
-        {salvando
-          ? (etapa ?? "Salvando...")
-          : editando
-            ? "Salvar alterações"
-            : "Publicar imóvel"}
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => setMostrarPreview(true)}
+          className="rounded-lg border border-neutral-300 px-4 py-4 text-sm font-medium text-neutral-700 dark:border-neutral-700 dark:text-neutral-300"
+        >
+          👁️ Preview
+        </button>
+        <button
+          type="submit"
+          disabled={salvando}
+          className="flex-1 rounded-lg bg-neutral-900 px-4 py-4 text-lg font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+        >
+          {salvando
+            ? (etapa ?? "Salvando...")
+            : editando
+              ? "Salvar alterações"
+              : "Publicar imóvel"}
+        </button>
+      </div>
+
+      {mostrarPreview && (
+        <PropertyPreview
+          titulo={titulo.trim() || derivarTitulo(descricao)}
+          descricao={descricao}
+          preco={preco}
+          localizacao={localizacao}
+          status={status}
+          fotos={fotosPreview}
+          onClose={() => setMostrarPreview(false)}
+        />
+      )}
     </form>
   );
 }
