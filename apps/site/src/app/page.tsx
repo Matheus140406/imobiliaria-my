@@ -8,8 +8,6 @@ import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { Hero } from "@/components/Hero";
 import { Sobre } from "@/components/Sobre";
 import { Servicos } from "@/components/Servicos";
-import { TunnelScene } from "@/components/tunnel3d/TunnelScene";
-import type { TunnelItem } from "@/components/tunnel3d/types";
 import { PropertyGrid } from "@/components/PropertyGrid";
 import { Depoimentos } from "@/components/Depoimentos";
 import { CtaSection } from "@/components/CtaSection";
@@ -52,25 +50,6 @@ export default async function Home() {
 
   const heroImageUrl = disponiveis.length > 0 ? capaDe(disponiveis[0])?.url : null;
 
-  const paraTunnelItem = (imovel: (typeof disponiveis)[number], vendida: boolean) => {
-    const capa = capaDe(imovel);
-    if (!capa) return null;
-    const item: TunnelItem = {
-      id: imovel.id,
-      url: capa.url,
-      titulo: imovel.titulo,
-      localizacao: imovel.localizacao,
-      vendida,
-      imovel,
-    };
-    return item;
-  };
-
-  const tunnelItems: TunnelItem[] = [
-    ...disponiveis.map((i) => paraTunnelItem(i, false)),
-    ...vendidos.map((i) => paraTunnelItem(i, true)),
-  ].filter((i): i is TunnelItem => i !== null);
-
   const semImoveis = disponiveis.length === 0 && vendidos.length === 0;
 
   return (
@@ -94,8 +73,6 @@ export default async function Home() {
 
       <Sobre imageUrl={heroImageUrl} />
       <Servicos />
-
-      <TunnelScene items={tunnelItems} />
 
       <div className="imoveis-section" id="imoveis">
         <PropertyGrid titulo="Casas Disponíveis" imoveis={disponiveis} />
