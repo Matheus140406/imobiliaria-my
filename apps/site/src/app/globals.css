@@ -447,10 +447,23 @@ section { padding: 6rem 5%; }
 .imoveis-header .section-text { color: rgba(255,255,255,0.5); }
 .imoveis-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  /* Colunas fixas por breakpoint (não auto-fit): com poucos imóveis,
+     auto-fit + 1fr colapsa as trilhas vazias e estica o card sozinho pra
+     preencher a linha toda — é a causa do card "gigante" no desktop. */
+  grid-template-columns: 1fr;
   gap: 1.5rem;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+  justify-items: center;
+}
+@media (min-width: 640px) {
+  .imoveis-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .imoveis-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1280px) {
+  .imoveis-grid { grid-template-columns: repeat(4, 1fr); }
 }
 .imovel-card {
   overflow: hidden;
@@ -459,6 +472,8 @@ section { padding: 6rem 5%; }
   background: var(--dark3);
   border: 1px solid rgba(200,164,74,0.15);
   transition: transform 0.3s;
+  width: 100%;
+  max-width: 380px;
 }
 .imovel-card:hover { transform: translateY(-4px); }
 .imovel-card-media {
