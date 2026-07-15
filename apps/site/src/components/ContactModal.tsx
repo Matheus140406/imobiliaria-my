@@ -109,7 +109,7 @@ export function ContactModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/80 transition-opacity sm:items-center sm:p-4"
+      className="fixed inset-0 z-[200] flex items-stretch justify-center bg-black/80 transition-opacity sm:items-center sm:p-4"
       style={{
         opacity: visivel ? 1 : 0,
         transitionDuration: `${DURACAO_TRANSICAO_MS}ms`,
