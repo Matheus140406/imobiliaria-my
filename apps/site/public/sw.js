@@ -6,16 +6,20 @@ if (workbox) {
   workbox.setConfig({ debug: false });
 
   const { registerRoute } = workbox.routing;
-  const { StaleWhileRevalidate, CacheFirst } = workbox.strategies;
+  const { NetworkFirst, CacheFirst } = workbox.strategies;
   const { ExpirationPlugin } = workbox.expiration;
   const { CacheableResponsePlugin } = workbox.cacheableResponse;
 
-  // Páginas (portfólio): carrega instantâneo do cache e atualiza em segundo
-  // plano quando houver internet.
+  // Páginas: busca da rede primeiro (imóveis publicados/atualizados no admin
+  // aparecem na hora), com um teto curto de espera. Só cai pro cache
+  // (visita anterior) se a rede falhar ou demorar demais — é o que mantém
+  // o site utilizável offline sem deixar conteúdo desatualizado no ar
+  // enquanto há conexão.
   registerRoute(
     ({ request }) => request.mode === "navigate",
-    new StaleWhileRevalidate({
+    new NetworkFirst({
       cacheName: "paginas",
+      networkTimeoutSeconds: 3,
       plugins: [new CacheableResponsePlugin({ statuses: [0, 200] })],
     }),
   );
