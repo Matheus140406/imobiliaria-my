@@ -1,20 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { Playfair_Display, Lato } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { SITE_URL, SITE_NAME, SITE_DESCRICAO } from "@/lib/site";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
+const playfair = Playfair_Display({
   variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   style: ["normal", "italic"],
 });
 
-const dmSans = DM_Sans({
+const lato = Lato({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "700", "900"],
 });
 
 const TITULO = `${SITE_NAME} — Realize o Sonho da Casa Própria`;
@@ -69,7 +69,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${cormorant.variable} ${dmSans.variable}`}>
+    <html lang="pt-BR" className={`${playfair.variable} ${lato.variable}`}>
       <body>
         {children}
         <ServiceWorkerRegister />
