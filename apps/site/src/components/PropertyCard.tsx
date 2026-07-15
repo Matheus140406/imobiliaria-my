@@ -33,7 +33,9 @@ export function PropertyCard({
           </div>
         )}
 
-        {vendida && <span className="imovel-badge-vendido">Vendido</span>}
+        <span className={vendida ? "imovel-badge imovel-badge-ocupada" : "imovel-badge imovel-badge-disponivel"}>
+          {vendida ? "Ocupada" : "Disponível"}
+        </span>
       </div>
 
       <div className="imovel-card-body">
