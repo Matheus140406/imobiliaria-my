@@ -1,0 +1,8 @@
+{
+  "name": "imobiliaria-my",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

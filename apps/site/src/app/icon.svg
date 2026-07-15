@@ -1,0 +1,13 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="96" ry="96" fill="#c8a44a"/>
+  <text
+    x="256"
+    y="282"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-weight="700"
+    font-size="176"
+    letter-spacing="-5"
+    fill="#0d1a12"
+  >M&amp;Y</text>
+</svg>
