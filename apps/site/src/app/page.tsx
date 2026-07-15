@@ -15,6 +15,12 @@ import { Footer } from "@/components/Footer";
 import { WhatsappFloat } from "@/components/WhatsappFloat";
 import { RevealObserver } from "@/components/RevealObserver";
 
+// Sem isso, o Next.js trata essa rota como estática por padrão (nenhuma
+// API dinâmica é usada) e a Vercel serve o HTML do cache de borda
+// indefinidamente entre deploys — um imóvel novo no Supabase não aparece
+// até o próximo deploy, mesmo sem nenhum cache de fetch configurado.
+export const dynamic = "force-dynamic";
+
 const MENSAGEM_GERAL =
   "Olá! Tudo bem? 😊\n\nEntrei em contato pois tenho interesse em conhecer os imóveis disponíveis na Imobiliária M&Y.\n\nPoderia me apresentar as opções e me dar mais informações sobre valores e condições?";
 

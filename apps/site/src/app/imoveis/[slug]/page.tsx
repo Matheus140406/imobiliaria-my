@@ -1,6 +1,11 @@
 import { redirect } from "next/navigation";
 import { getImovelPorSlug } from "@/lib/imoveis";
 
+// Mesma razão do app/page.tsx: sem isso, essa rota pode ser cacheada pela
+// Vercel e redirecionar um visitante pra um imóvel já removido/vendido
+// como se ainda existisse.
+export const dynamic = "force-dynamic";
+
 export default async function ImovelPage({
   params,
 }: {
