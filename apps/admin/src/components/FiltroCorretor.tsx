@@ -18,7 +18,7 @@ export function FiltroCorretor({
         const value = e.target.value;
         router.push(value ? `/dashboard?corretor=${value}` : "/dashboard");
       }}
-      className="rounded border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+      className="rounded border border-neutral-300 px-3 py-2 text-base dark:border-neutral-700 dark:bg-neutral-900"
     >
       <option value="">Todos os corretores</option>
       {corretores.map((c) => (

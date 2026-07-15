@@ -274,7 +274,7 @@ export function ImovelForm({
           value={titulo}
           onChange={(e) => setTitulo(e.target.value)}
           placeholder="Nome da casa"
-          className="w-full border-0 border-b border-neutral-200 bg-transparent px-1 py-1 text-sm text-neutral-500 placeholder:text-neutral-400 focus:border-neutral-400 focus:outline-none dark:border-neutral-800 dark:placeholder:text-neutral-600"
+          className="w-full border-0 border-b border-neutral-200 bg-transparent px-1 py-1 text-base text-neutral-500 placeholder:text-neutral-400 focus:border-neutral-400 focus:outline-none dark:border-neutral-800 dark:placeholder:text-neutral-600"
         />
       </div>
 
@@ -366,7 +366,7 @@ export function ImovelForm({
                 step="0.01"
                 value={preco}
                 onChange={(e) => setPreco(e.target.value)}
-                className="w-full rounded border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-base dark:border-neutral-700 dark:bg-neutral-900"
               />
             </div>
             <div>
@@ -376,7 +376,7 @@ export function ImovelForm({
               <input
                 value={localizacao}
                 onChange={(e) => setLocalizacao(e.target.value)}
-                className="w-full rounded border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-base dark:border-neutral-700 dark:bg-neutral-900"
               />
             </div>
           </div>
@@ -390,7 +390,7 @@ export function ImovelForm({
                 type="date"
                 value={dataVenda ?? ""}
                 onChange={(e) => setDataVenda(e.target.value)}
-                className="w-full rounded border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-base dark:border-neutral-700 dark:bg-neutral-900"
               />
             </div>
           )}
@@ -403,7 +403,7 @@ export function ImovelForm({
               <select
                 value={corretorId}
                 onChange={(e) => setCorretorId(e.target.value)}
-                className="w-full rounded border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-base dark:border-neutral-700 dark:bg-neutral-900"
               >
                 {corretores.map((c) => (
                   <option key={c.id} value={c.id}>
