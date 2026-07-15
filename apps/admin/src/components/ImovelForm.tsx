@@ -14,6 +14,11 @@ import {
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { StatusToggle } from "@/components/StatusToggle";
 import { BotaoVoltar } from "@/components/BotaoVoltar";
+import {
+  buscarEnderecoPorCep,
+  formatarCep,
+  formatarLocalizacaoDoEndereco,
+} from "@/lib/viacep";
 import type { Tables } from "@imobiliaria/db/types";
 
 const MAX_ARQUIVOS = 30;
@@ -53,6 +58,9 @@ export function ImovelForm({
   const [mostrarAvancado, setMostrarAvancado] = useState(
     Boolean(imovel?.preco || imovel?.localizacao || imovel?.data_venda),
   );
+  const [cep, setCep] = useState("");
+  const [buscandoCep, setBuscandoCep] = useState(false);
+  const [erroCep, setErroCep] = useState<string | null>(null);
 
   const [salvando, setSalvando] = useState(false);
   const [etapa, setEtapa] = useState<string | null>(null);
@@ -97,6 +105,31 @@ export function ImovelForm({
 
   function removerArquivo(index: number) {
     setArquivos((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleCepChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setCep(formatarCep(e.target.value));
+    setErroCep(null);
+  }
+
+  async function handleCepBlur() {
+    const digits = cep.replace(/\D/g, "");
+    if (digits.length !== 8) return;
+
+    setBuscandoCep(true);
+    setErroCep(null);
+    try {
+      const endereco = await buscarEnderecoPorCep(digits);
+      if (!endereco) {
+        setErroCep("CEP não encontrado. Preencha a localização manualmente.");
+        return;
+      }
+      setLocalizacao(formatarLocalizacaoDoEndereco(endereco));
+    } catch {
+      setErroCep("Não foi possível buscar o CEP agora. Preencha manualmente.");
+    } finally {
+      setBuscandoCep(false);
+    }
   }
 
   function montarPayload() {
@@ -391,15 +424,38 @@ export function ImovelForm({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium">
-                Localização
-              </label>
+              <label className="mb-1 block text-sm font-medium">CEP</label>
               <input
-                value={localizacao}
-                onChange={(e) => setLocalizacao(e.target.value)}
+                value={cep}
+                onChange={handleCepChange}
+                onBlur={handleCepBlur}
+                inputMode="numeric"
+                placeholder="00000-000"
                 className="w-full rounded border border-neutral-300 px-3 py-2 text-base dark:border-neutral-700 dark:bg-neutral-900"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium">
+              Localização
+              {buscandoCep && (
+                <span className="ml-2 text-xs font-normal text-neutral-500">
+                  Buscando endereço...
+                </span>
+              )}
+            </label>
+            <input
+              value={localizacao}
+              onChange={(e) => setLocalizacao(e.target.value)}
+              placeholder="Bairro, Cidade - UF"
+              className="w-full rounded border border-neutral-300 px-3 py-2 text-base dark:border-neutral-700 dark:bg-neutral-900"
+            />
+            <p className="mt-1 text-xs text-neutral-500">
+              Preenchido automaticamente pelo CEP (só bairro e cidade, sem rua/número —
+              você pode editar livremente).
+            </p>
+            {erroCep && <p className="mt-1 text-xs text-red-600">{erroCep}</p>}
           </div>
 
           {status === "ocupada" && (
