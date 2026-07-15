@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@imobiliaria/db/server";
 import { getCorretorAtual } from "@/lib/auth";
-import { ImovelCard } from "@/components/ImovelCard";
+import { ImoveisCarousel } from "@/components/ImoveisCarousel";
 import { FiltroCorretor } from "@/components/FiltroCorretor";
 import type { Tables } from "@imobiliaria/db/types";
 
@@ -57,11 +57,7 @@ export default async function DashboardPage({
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {(imoveis ?? []).map((imovel) => (
-          <ImovelCard key={imovel.id} imovel={imovel} mostrarCorretor={isAdmin} />
-        ))}
-      </div>
+      <ImoveisCarousel imoveis={imoveis ?? []} mostrarCorretor={isAdmin} />
 
       {(imoveis ?? []).length === 0 && (
         <p className="py-8 text-center text-neutral-500">

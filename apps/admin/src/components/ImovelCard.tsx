@@ -48,8 +48,8 @@ export function ImovelCard({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-      <div className="relative aspect-[4/3] w-full bg-neutral-100 dark:bg-neutral-900">
+    <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+      <div className="relative aspect-[16/10] w-full bg-neutral-100 dark:bg-neutral-900">
         {capa ? (
           <Image
             src={capa.url}
@@ -59,12 +59,12 @@ export function ImovelCard({
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-6xl text-neutral-300 dark:text-neutral-700">
+          <div className="flex h-full w-full items-center justify-center text-4xl text-neutral-300 dark:text-neutral-700">
             🏠
           </div>
         )}
         <span
-          className={`absolute left-2 top-2 rounded-full px-3 py-1 text-xs font-semibold text-white shadow ${
+          className={`absolute left-1.5 top-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white shadow ${
             disponivel ? "bg-green-500" : "bg-neutral-600"
           }`}
         >
@@ -72,23 +72,26 @@ export function ImovelCard({
         </span>
       </div>
 
-      <div className="p-4">
-        <h2 className="mb-1 truncate text-lg font-semibold">
-          {imovel.titulo}
-        </h2>
-        <p className="mb-3 text-xl font-bold text-neutral-900 dark:text-white">
+      <div className="p-3">
+        <h2 className="truncate text-sm font-semibold">{imovel.titulo}</h2>
+        {imovel.localizacao && (
+          <p className="mt-0.5 truncate text-xs text-neutral-500">
+            📍 {imovel.localizacao}
+          </p>
+        )}
+        <p className="mt-1 text-base font-bold text-neutral-900 dark:text-white">
           {formatPreco(imovel.preco)}
         </p>
         {mostrarCorretor && (
-          <p className="mb-3 text-sm text-neutral-500">
+          <p className="mt-0.5 text-xs text-neutral-500">
             Corretor: {imovel.corretor?.nome ?? "-"}
           </p>
         )}
 
-        <div className="flex gap-2">
+        <div className="mt-2 flex gap-1.5">
           <Link
             href={`/dashboard/imoveis/${imovel.id}`}
-            className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-neutral-900 px-3 py-3 text-sm font-semibold text-white dark:bg-white dark:text-neutral-900"
+            className="flex flex-1 items-center justify-center gap-1 rounded-md bg-neutral-900 px-2 py-2 text-xs font-semibold text-white dark:bg-white dark:text-neutral-900"
           >
             ✏️ Editar
           </Link>
@@ -96,7 +99,7 @@ export function ImovelCard({
             type="button"
             onClick={handleExcluir}
             disabled={excluindo}
-            className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-red-200 px-3 py-3 text-sm font-semibold text-red-600 disabled:opacity-50 dark:border-red-900 dark:text-red-400"
+            className="flex flex-1 items-center justify-center gap-1 rounded-md border border-red-200 px-2 py-2 text-xs font-semibold text-red-600 disabled:opacity-50 dark:border-red-900 dark:text-red-400"
           >
             🗑️ Excluir
           </button>
