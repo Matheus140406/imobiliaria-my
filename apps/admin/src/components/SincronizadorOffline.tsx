@@ -54,7 +54,12 @@ export function SincronizadorOffline() {
     // Fallback universal: funciona em qualquer navegador, com ou sem
     // Background Sync (é o que garante a sincronização no Safari/iOS).
     window.addEventListener("online", sincronizar);
-    window.addEventListener(EVENTO_FILA_MUDOU, atualizarContagem);
+    // Reage a qualquer item novo na fila tentando sincronizar na hora (não só
+    // recontando): cobre o caso de um item ser enfileirado enquanto o
+    // dispositivo já está online (ex: heurística de rede com falso positivo),
+    // que de outra forma só sincronizaria num futuro evento "online" que
+    // nunca chega.
+    window.addEventListener(EVENTO_FILA_MUDOU, sincronizar);
 
     // Já tenta sincronizar ao montar, caso o dashboard abra com sinal e
     // existam itens pendentes de uma sessão offline anterior.
@@ -98,7 +103,7 @@ export function SincronizadorOffline() {
 
     return () => {
       window.removeEventListener("online", sincronizar);
-      window.removeEventListener(EVENTO_FILA_MUDOU, atualizarContagem);
+      window.removeEventListener(EVENTO_FILA_MUDOU, sincronizar);
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.removeEventListener(
           "message",
