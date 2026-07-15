@@ -734,7 +734,8 @@ footer {
   .nav-links { display: none; }
   .about-grid { grid-template-columns: 1fr; gap: 2rem; }
   .about-image-photo, .about-image-fallback { height: 300px; }
-  .hero-stats { right: 5%; gap: 1.5rem; }
+  /* bottom maior que no desktop: evita sobrepor o botão flutuante do WhatsApp */
+  .hero-stats { right: 5%; bottom: 6.5rem; gap: 1.5rem; }
   .stat-num { font-size: 1.8rem; }
   .tunnel-item { width: min(85vw, 640px); }
 }

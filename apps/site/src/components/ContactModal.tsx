@@ -168,6 +168,7 @@ export function ContactModal({
                   src={midiaAtual.url}
                   alt={imovel.titulo}
                   fill
+                  sizes="(max-width: 640px) 100vw, 576px"
                   className="object-cover"
                 />
               )}
