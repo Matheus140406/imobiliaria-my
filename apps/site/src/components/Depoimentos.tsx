@@ -117,9 +117,11 @@ function iniciaisDoNome(nome: string) {
 
 const DEPOIMENTOS_LOOP = [...DEPOIMENTOS, ...DEPOIMENTOS];
 const VELOCIDADE_PX_POR_FRAME = 0.6;
+const PAUSA_APOS_CLIQUE_MS = 3500;
 
 export function Depoimentos() {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const pausadoAteRef = useRef(0);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -133,7 +135,7 @@ export function Depoimentos() {
     let frameId: number;
 
     function tick() {
-      if (wrapper) {
+      if (wrapper && Date.now() >= pausadoAteRef.current) {
         wrapper.scrollLeft += VELOCIDADE_PX_POR_FRAME;
         const metade = wrapper.scrollWidth / 2;
         if (wrapper.scrollLeft >= metade) {
@@ -150,7 +152,16 @@ export function Depoimentos() {
   function mover(direcao: 1 | -1) {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
-    wrapper.scrollLeft += direcao * 356;
+    // Pausa o scroll automático por um instante: sem isso, ele desfaz o
+    // clique em poucos segundos (reforça o "próximo" e anula o "anterior").
+    pausadoAteRef.current = Date.now() + PAUSA_APOS_CLIQUE_MS;
+
+    const metade = wrapper.scrollWidth / 2;
+    let alvo = wrapper.scrollLeft + direcao * 356;
+    // Mantém a ilusão de loop infinito também "pra trás": sem isso, perto
+    // do início o scroll trava em 0 em vez de voltar pro fim da lista.
+    if (alvo < 0) alvo += metade;
+    wrapper.scrollLeft = alvo;
   }
 
   return (
