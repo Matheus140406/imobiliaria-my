@@ -4,10 +4,14 @@ import { useState } from "react";
 import Image from "next/image";
 import { createClient } from "@imobiliaria/db/client";
 import { uploadMidiaParaImovel } from "@/lib/uploadMidias";
+import { pareceErroDeRede } from "@/lib/networkError";
+import { adicionarMidiaPendente } from "@/lib/offlineQueue";
 import type { Tables } from "@imobiliaria/db/types";
 
 const MAX_MIDIAS = 30;
 const LIMITE_COMPRESSAO_BYTES = 5 * 1024 * 1024; // 5MB
+const MENSAGEM_OFFLINE_CURTA =
+  "Sem internet: isso vai ser enviado quando a conexão voltar.";
 
 export function MediaManager({
   imovelId,
@@ -19,6 +23,16 @@ export function MediaManager({
   const [midias, setMidias] = useState(midiasIniciais);
   const [statusEnvio, setStatusEnvio] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [avisoOffline, setAvisoOffline] = useState<string | null>(null);
+
+  async function enfileirarUpload(file: File, ordem: number) {
+    await adicionarMidiaPendente({
+      imovelId,
+      acao: "adicionar",
+      arquivo: { nome: file.name, tipo: file.type, blob: file, ordem },
+    });
+    setAvisoOffline(MENSAGEM_OFFLINE_CURTA);
+  }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
@@ -56,6 +70,12 @@ export function MediaManager({
     setStatusEnvio(temImagemGrande ? "Compactando fotos..." : "Enviando...");
 
     for (const file of aEnviar) {
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        await enfileirarUpload(file, ordem);
+        ordem += 1;
+        continue;
+      }
+
       setStatusEnvio(
         file.type.startsWith("image/") && file.size > LIMITE_COMPRESSAO_BYTES
           ? "Compactando fotos..."
@@ -73,6 +93,11 @@ export function MediaManager({
         setMidias((prev) => [...prev, midia]);
         ordem += 1;
       } catch (erroUpload) {
+        if (pareceErroDeRede(erroUpload)) {
+          await enfileirarUpload(file, ordem);
+          ordem += 1;
+          continue;
+        }
         setErro(
           erroUpload instanceof Error
             ? erroUpload.message
@@ -88,13 +113,44 @@ export function MediaManager({
   async function handleRemover(midia: Tables<"midias">) {
     if (!confirm("Remover esta mídia?")) return;
 
-    const supabase = createClient();
-    const path = midia.url.split("/imoveis-midia/")[1];
-    if (path) {
-      await supabase.storage.from("imoveis-midia").remove([path]);
+    async function enfileirarRemocao() {
+      await adicionarMidiaPendente({
+        imovelId,
+        acao: "remover",
+        midia: { id: midia.id, url: midia.url },
+      });
+      setMidias((prev) => prev.filter((m) => m.id !== midia.id));
+      setAvisoOffline(MENSAGEM_OFFLINE_CURTA);
     }
-    await supabase.from("midias").delete().eq("id", midia.id);
-    setMidias((prev) => prev.filter((m) => m.id !== midia.id));
+
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      await enfileirarRemocao();
+      return;
+    }
+
+    const supabase = createClient();
+    try {
+      const path = midia.url.split("/imoveis-midia/")[1];
+      if (path) {
+        await supabase.storage.from("imoveis-midia").remove([path]);
+      }
+      const { error } = await supabase
+        .from("midias")
+        .delete()
+        .eq("id", midia.id);
+      if (error) throw error;
+      setMidias((prev) => prev.filter((m) => m.id !== midia.id));
+    } catch (erroRemocao) {
+      if (pareceErroDeRede(erroRemocao)) {
+        await enfileirarRemocao();
+        return;
+      }
+      setErro(
+        erroRemocao instanceof Error
+          ? erroRemocao.message
+          : "Falha ao remover mídia.",
+      );
+    }
   }
 
   return (
@@ -114,6 +170,11 @@ export function MediaManager({
       />
       {statusEnvio && (
         <p className="text-sm text-neutral-500">{statusEnvio}</p>
+      )}
+      {avisoOffline && (
+        <p className="mb-3 text-sm text-amber-700 dark:text-amber-400">
+          📶 {avisoOffline}
+        </p>
       )}
       {erro && <p className="text-sm text-red-600">{erro}</p>}
 
