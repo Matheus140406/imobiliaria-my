@@ -13,6 +13,7 @@ import {
 } from "@/lib/offlineQueue";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { StatusToggle } from "@/components/StatusToggle";
+import { BotaoVoltar } from "@/components/BotaoVoltar";
 import type { Tables } from "@imobiliaria/db/types";
 
 const MAX_ARQUIVOS = 30;
@@ -57,6 +58,18 @@ export function ImovelForm({
   const [etapa, setEtapa] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [offlineQueued, setOfflineQueued] = useState(false);
+
+  const sujo = editando
+    ? titulo !== (imovel?.titulo ?? "") ||
+      descricao !== (imovel?.descricao ?? "") ||
+      preco !== (imovel?.preco?.toString() ?? "") ||
+      localizacao !== (imovel?.localizacao ?? "") ||
+      status !== (imovel?.status ?? "disponivel")
+    : titulo !== "" ||
+      descricao !== "" ||
+      preco !== "" ||
+      localizacao !== "" ||
+      arquivos.length > 0;
 
   function handleArquivosChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
@@ -269,6 +282,14 @@ export function ImovelForm({
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl space-y-6">
+      <BotaoVoltar
+        confirmar={
+          sujo
+            ? "Você tem alterações não salvas. Sair sem salvar?"
+            : undefined
+        }
+      />
+
       <div>
         <input
           value={titulo}
