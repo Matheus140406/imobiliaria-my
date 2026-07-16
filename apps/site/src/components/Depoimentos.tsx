@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import styles from "./Depoimentos.module.css";
 
 const LOCAL = "Águas Lindas de Goiás, GO";
@@ -116,7 +117,9 @@ function iniciaisDoNome(nome: string) {
 }
 
 const DEPOIMENTOS_LOOP = [...DEPOIMENTOS, ...DEPOIMENTOS];
-const VELOCIDADE_PX_POR_FRAME = 0.6;
+// "Bem lento": deliberadamente mais devagar que uma marquee comum, pra dar
+// tempo de ler cada depoimento sem precisar parar o carrossel manualmente.
+const VELOCIDADE_PX_POR_FRAME = 0.35;
 const PAUSA_APOS_CLIQUE_MS = 3500;
 
 export function Depoimentos() {
@@ -124,6 +127,7 @@ export function Depoimentos() {
   const pausadoAteRef = useRef(0);
   const pausadoPeloMouseRef = useRef(false);
   const [progresso, setProgresso] = useState(0);
+  const reduzMovimentoPreferido = useReducedMotion();
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -203,10 +207,18 @@ export function Depoimentos() {
         <div ref={wrapperRef} className={styles.marqueeWrapper}>
           <div className={styles.marqueeTrack}>
             {DEPOIMENTOS_LOOP.map((d, i) => (
-              <div
+              <motion.div
                 key={`${d.nome}-${i}`}
                 className={styles.card}
-                style={{ "--i": i % DEPOIMENTOS.length } as React.CSSProperties}
+                initial={reduzMovimentoPreferido ? false : { opacity: 0, y: 28, scale: 0.96 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{
+                  duration: 0.55,
+                  ease: "easeOut",
+                  delay: (i % DEPOIMENTOS.length) * 0.04,
+                }}
+                whileHover={reduzMovimentoPreferido ? undefined : { y: -8, scale: 1.015 }}
               >
                 <div className={styles.stars}>★★★★★</div>
                 <p className={styles.quoteText}>{d.texto}</p>
@@ -217,7 +229,7 @@ export function Depoimentos() {
                     <div className={styles.location}>{LOCAL}</div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

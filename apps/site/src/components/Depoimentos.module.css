@@ -91,7 +91,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(207, 166, 70, 0.4);
+  border: 1px solid rgba(201, 151, 0, 0.4);
   background: #fff;
   color: var(--dark);
   font-size: 20px;
@@ -125,29 +125,39 @@
   padding: 2rem;
   position: relative;
   scroll-snap-align: start;
-  opacity: 0;
-  transform: translateY(24px) scale(0.97);
-  animation: cardIn 0.6s ease forwards;
-  animation-delay: calc(var(--i) * 60ms);
+  border: 1px solid rgba(11,37,69,0.06);
+  box-shadow: 0 8px 24px -12px rgba(11,37,69,0.12);
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-@keyframes cardIn {
-  to { opacity: 1; transform: translateY(0) scale(1); }
+.card:hover {
+  border-color: rgba(201,151,0,0.3);
+  box-shadow: 0 24px 48px -16px rgba(11,37,69,0.22);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card { opacity: 1; transform: none; animation: none; }
+  .card { transition: none; }
 }
 
 .card::before {
   content: '"';
   font-family: var(--font-serif), serif;
   font-size: 6rem;
-  color: rgba(207, 166, 70, 0.15);
+  color: rgba(201, 151, 0, 0.18);
   position: absolute;
   top: -10px;
   left: 1.5rem;
   line-height: 1;
+  animation: aspasPulse 4s ease-in-out infinite;
+}
+
+@keyframes aspasPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::before { animation: none; }
 }
 
 .stars {
@@ -156,6 +166,17 @@
   margin-bottom: 1rem;
   position: relative;
   z-index: 1;
+  display: inline-block;
+  animation: brilhoEstrelas 3s ease-in-out infinite;
+}
+
+@keyframes brilhoEstrelas {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(201,151,0,0)); }
+  50% { filter: drop-shadow(0 0 6px rgba(201,151,0,0.55)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stars { animation: none; }
 }
 
 .quoteText {
@@ -180,7 +201,7 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: rgba(207, 166, 70, 0.2);
+  background: rgba(201, 151, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -189,6 +210,16 @@
   font-size: 16px;
   color: var(--gold-dark);
   flex-shrink: 0;
+  animation: flutuarAvatar 5s ease-in-out infinite;
+}
+
+@keyframes flutuarAvatar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar { animation: none; }
 }
 
 .name {
@@ -206,7 +237,7 @@
   max-width: 340px;
   margin: 2.5rem auto 0;
   height: 2px;
-  background: rgba(207, 166, 70, 0.2);
+  background: rgba(201, 151, 0, 0.2);
   border-radius: 2px;
   overflow: hidden;
 }
