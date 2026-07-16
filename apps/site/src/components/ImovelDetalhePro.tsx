@@ -8,6 +8,12 @@ import { whatsappLink, formatPreco } from "@/lib/format";
 import type { ImovelComMidias } from "@/lib/types";
 import { WhatsappIcon } from "./WhatsappIcon";
 
+// Mensagem exata levantada pelo trigger trg_rate_limit_leads no banco
+// (private.checar_rate_limit_leads) quando o mesmo IP excede 5 envios em
+// 10 minutos — comparação exata, pra nunca repassar ao usuário um erro
+// interno diferente disfarçado de "aguarde".
+const MENSAGEM_RATE_LIMIT_BANCO = "Muitas solicitações. Tente novamente em alguns minutos.";
+
 // Mesma paleta "luxo escuro" do ContactModal — deliberadamente diferente
 // do verde/dourado do resto do site. Centralizada aqui em vez de duplicada
 // porque esta página e o modal agora compartilham a mesma linguagem visual.
@@ -134,6 +140,9 @@ export function ImovelDetalhePro({
     setEnviando(true);
     setErro(null);
 
+    // Insert direto do navegador: o rate limit por IP já existe como
+    // trigger no banco (trg_rate_limit_leads) e só enxerga o IP real do
+    // visitante quando a chamada chega direto do navegador.
     const supabase = createClient();
     const { error } = await supabase.from("leads").insert({
       imovel_id: imovel.id,
@@ -145,7 +154,11 @@ export function ImovelDetalhePro({
     setEnviando(false);
 
     if (error) {
-      setErro("Não foi possível enviar seu contato. Tente novamente.");
+      setErro(
+        error.message === MENSAGEM_RATE_LIMIT_BANCO
+          ? "Muitas tentativas. Aguarde alguns minutos e tente novamente."
+          : "Não foi possível enviar seu contato. Tente novamente.",
+      );
       return;
     }
 

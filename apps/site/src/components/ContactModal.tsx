@@ -9,6 +9,12 @@ import type { ImovelComMidias } from "@/lib/types";
 
 const DURACAO_TRANSICAO_MS = 200;
 
+// Mensagem exata levantada pelo trigger trg_rate_limit_leads no banco
+// (private.checar_rate_limit_leads) quando o mesmo IP excede 5 envios em
+// 10 minutos — comparação exata, pra nunca repassar ao usuário um erro
+// interno diferente disfarçado de "aguarde".
+const MENSAGEM_RATE_LIMIT_BANCO = "Muitas solicitações. Tente novamente em alguns minutos.";
+
 // Paleta "luxo escuro" — deliberadamente diferente do verde/dourado do
 // resto do site: essa superfície existe só pra maximizar conversão de
 // lead, então usa um tratamento visual mais forte/exclusivo.
@@ -84,6 +90,12 @@ export function ContactModal({
     setEnviando(true);
     setErro(null);
 
+    // Insert direto do navegador (não via API própria): o rate limit por IP
+    // já existe como trigger no banco (trg_rate_limit_leads) e só enxerga o
+    // IP real do visitante quando a chamada chega direto do navegador — um
+    // proxy pela nossa própria API faria todo mundo aparecer com o IP do
+    // servidor, e o rate limit passaria a valer pro site inteiro, não por
+    // pessoa.
     const supabase = createClient();
     const { error } = await supabase.from("leads").insert({
       imovel_id: imovel.id,
@@ -95,7 +107,11 @@ export function ContactModal({
     setEnviando(false);
 
     if (error) {
-      setErro("Não foi possível enviar seu contato. Tente novamente.");
+      setErro(
+        error.message === MENSAGEM_RATE_LIMIT_BANCO
+          ? "Muitas tentativas. Aguarde alguns minutos e tente novamente."
+          : "Não foi possível enviar seu contato. Tente novamente.",
+      );
       return;
     }
 
