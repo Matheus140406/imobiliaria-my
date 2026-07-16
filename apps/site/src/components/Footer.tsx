@@ -11,7 +11,7 @@ export function Footer({ whatsapp }: { whatsapp?: string | null }) {
           <p className="footer-corretor" style={{ marginTop: "1rem" }}>
             <strong>Emanoel Dias</strong> — Corretor de Imóveis
             <br />
-            CRECI: XX.XXX-F
+            CRECI/GO 40574
             <br />
             Atendimento Digital
             <br />

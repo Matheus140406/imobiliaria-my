@@ -95,7 +95,7 @@ export default function PoliticaDePrivacidadePage() {
 
         <h2>10. Contato do responsável pelo tratamento</h2>
         <p>
-          Emanoel Dias — Corretor de Imóveis (CRECI XX.XXX-F)
+          Emanoel Dias — Corretor de Imóveis (CRECI/GO 40574)
           <br />
           E-mail: <a href="mailto:emanoel.tecedif@gmail.com">emanoel.tecedif@gmail.com</a>
         </p>
