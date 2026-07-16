@@ -1,6 +1,13 @@
 import { SITE_URL, SITE_NAME } from "@/lib/site";
 import type { ImovelComMidias } from "@/lib/types";
 
+// JSON.stringify não escapa "<", então um título/descrição de imóvel
+// contendo "</script>" quebraria para fora da tag e injetaria HTML/JS na
+// página pública. < é indistinguível de "<" para o parser de JSON.
+function jsonLdSeguro(data: unknown) {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 function NegocioJsonLd({ whatsapp }: { whatsapp?: string | null }) {
   const data = {
     "@context": "https://schema.org",
@@ -43,7 +50,7 @@ function NegocioJsonLd({ whatsapp }: { whatsapp?: string | null }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: jsonLdSeguro(data) }}
     />
   );
 }
@@ -71,7 +78,7 @@ function BreadcrumbJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: jsonLdSeguro(data) }}
     />
   );
 }
@@ -131,7 +138,7 @@ export function SeoJsonLd({
           key={imovel.id}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(imovelParaJsonLd(imovel)),
+            __html: jsonLdSeguro(imovelParaJsonLd(imovel)),
           }}
         />
       ))}
