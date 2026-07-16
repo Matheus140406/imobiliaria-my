@@ -15,14 +15,13 @@ const DURACAO_TRANSICAO_MS = 200;
 // interno diferente disfarçado de "aguarde".
 const MENSAGEM_RATE_LIMIT_BANCO = "Muitas solicitações. Tente novamente em alguns minutos.";
 
-// Paleta "luxo escuro" — deliberadamente diferente do verde/dourado do
-// resto do site: essa superfície existe só pra maximizar conversão de
-// lead, então usa um tratamento visual mais forte/exclusivo.
-const BG_FUNDO = "#080808";
-const DOURADO_CLARO = "#C9A063";
-const DOURADO_SUAVE = "#AA8C56";
-const BORDA_DOURADA = "rgba(201,160,99,0.3)";
-const GRADIENTE_CTA = "linear-gradient(135deg, #B28F47, #6A532B)";
+// Mesma identidade "banco premium europeu" do resto do site: fundo
+// azul-marinho profundo, dourado reservado só pro CTA/detalhes de destaque.
+const BG_FUNDO = "#0B2545";
+const DOURADO_CLARO = "#E0B23A";
+const DOURADO_SUAVE = "#C7B27C";
+const BORDA_DOURADA = "rgba(201,151,0,0.35)";
+const GRADIENTE_CTA = "linear-gradient(135deg, #E0B23A, #B8860B)";
 
 function IconeEdificio() {
   return (

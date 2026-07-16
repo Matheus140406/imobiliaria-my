@@ -75,7 +75,7 @@ export default async function Home() {
         totalVendidos={vendidos.length}
       />
 
-      <Sobre imageUrl={heroImageUrl} />
+      <Sobre />
       <Servicos />
 
       <div className="imoveis-section" id="imoveis">

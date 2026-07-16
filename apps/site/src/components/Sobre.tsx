@@ -1,22 +1,26 @@
 import Image from "next/image";
 
-export function Sobre({ imageUrl }: { imageUrl?: string | null }) {
+export function Sobre() {
   return (
     <section className="about" id="sobre">
       <div className="about-grid">
         <div className="about-image-wrap reveal">
-          {imageUrl ? (
-            <div className="about-image-photo">
-              <Image
-                src={imageUrl}
-                alt="Imóvel Imobiliária M&Y"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-          ) : (
-            <div className="about-image-fallback" />
-          )}
+          <div className="about-image-photo">
+            <Image
+              src="/confianca-2.jpg"
+              alt="Assinatura de contrato de compra de imóvel"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          </div>
+          <div className="about-image-photo-secundaria">
+            <Image
+              src="/confianca-1.jpg"
+              alt="Aperto de mãos selando a negociação de um imóvel"
+              fill
+              sizes="(max-width: 768px) 60vw, 28vw"
+            />
+          </div>
           <div className="about-image-accent" />
         </div>
         <div className="reveal">

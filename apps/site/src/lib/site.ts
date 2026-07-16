@@ -3,4 +3,4 @@ export const SITE_URL =
 
 export const SITE_NAME = "Imobiliária M&Y";
 export const SITE_DESCRICAO =
-  "Imóveis disponíveis em Águas Lindas de Goiás - GO. Compra, venda, locação e financiamento com atendimento humanizado.";
+  "Casas e imóveis à venda e para alugar em Águas Lindas de Goiás - GO. Compra, venda, locação e financiamento imobiliário com atendimento personalizado e corretor CRECI verificado.";

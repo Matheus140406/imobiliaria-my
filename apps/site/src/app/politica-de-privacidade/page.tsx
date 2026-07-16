@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ScrollParaTopo } from "@/components/ScrollParaTopo";
 
 export const metadata: Metadata = {
   title: "Política de Privacidade",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function PoliticaDePrivacidadePage() {
   return (
     <div className="legal-page" id="conteudo-principal" tabIndex={-1} style={{ outline: "none" }}>
+      <ScrollParaTopo />
       <div className="legal-page-inner">
         <Link href="/" className="legal-page-back">
           ← Voltar ao site
@@ -95,7 +97,7 @@ export default function PoliticaDePrivacidadePage() {
 
         <h2>10. Contato do responsável pelo tratamento</h2>
         <p>
-          Emanoel Dias — Corretor de Imóveis (CRECI/GO 40574)
+          Emanoel Dias De Freitas Neto — Corretor de Imóveis (CRECI/GO 40574)
           <br />
           E-mail: <a href="mailto:emanoel.tecedif@gmail.com">emanoel.tecedif@gmail.com</a>
         </p>

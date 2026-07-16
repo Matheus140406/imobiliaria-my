@@ -10,7 +10,7 @@ type Filtro = "todos" | "disponivel" | "ocupado" | "favoritos";
 const OPCOES: { valor: Filtro; label: string }[] = [
   { valor: "todos", label: "Todos" },
   { valor: "disponivel", label: "Disponível" },
-  { valor: "ocupado", label: "Ocupado" },
+  { valor: "ocupado", label: "Indisponível" },
   { valor: "favoritos", label: "Favoritos" },
 ];
 
@@ -44,7 +44,7 @@ export function ImoveisFiltro({
 
   if (todos.length === 0) {
     return (
-      <p className="py-16 text-center text-white/50">
+      <p className="py-16 text-center" style={{ color: "var(--text-muted)" }}>
         Nenhum imóvel cadastrado ainda.
       </p>
     );
@@ -72,7 +72,7 @@ export function ImoveisFiltro({
 
       <div className="imoveis-grid-animada" key={filtro} aria-live="polite">
         {filtrados.length === 0 ? (
-          <p className="col-span-full py-10 text-center text-sm text-white/40">
+          <p className="col-span-full py-10 text-center text-sm" style={{ color: "var(--text-muted)" }}>
             {filtro === "favoritos"
               ? "Você ainda não salvou nenhum imóvel. Toque no coração de um card para salvar."
               : "Nenhum imóvel encontrado para esse filtro."}

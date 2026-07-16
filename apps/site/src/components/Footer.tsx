@@ -9,7 +9,7 @@ export function Footer({ whatsapp }: { whatsapp?: string | null }) {
             Imobiliária <span>M&amp;Y</span>
           </div>
           <p className="footer-corretor" style={{ marginTop: "1rem" }}>
-            <strong>Emanoel Dias</strong> — Corretor de Imóveis
+            <strong>Emanoel Dias De Freitas Neto</strong> — Corretor de Imóveis
             <br />
             CRECI/GO 40574
             <br />

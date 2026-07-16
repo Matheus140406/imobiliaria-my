@@ -27,8 +27,9 @@ export function Hero({
           da <em>Casa Própria</em>
         </h1>
         <p>
-          Encontre o imóvel perfeito para você e sua família com quem entende
-          do mercado e cuida de cada detalhe com dedicação.
+          Conduzimos cada etapa da conquista do seu imóvel com a segurança,
+          a transparência e a atenção que um patrimônio dessa importância
+          merece.
         </p>
         <div className="hero-actions">
           {whatsappUrl && (

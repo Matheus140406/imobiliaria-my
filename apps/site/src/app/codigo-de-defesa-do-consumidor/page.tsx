@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ScrollParaTopo } from "@/components/ScrollParaTopo";
 
 export const metadata: Metadata = {
   title: "Direitos do Consumidor",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function CodigoDeDefesaDoConsumidorPage() {
   return (
     <div className="legal-page" id="conteudo-principal" tabIndex={-1} style={{ outline: "none" }}>
+      <ScrollParaTopo />
       <div className="legal-page-inner">
         <Link href="/" className="legal-page-back">
           ← Voltar ao site

@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Imóveis em Águas Lindas de Goiás - GO",
     start_url: "/",
     display: "standalone",
-    background_color: "#0d1a12",
-    theme_color: "#c8a44a",
+    background_color: "#0B2545",
+    theme_color: "#C99700",
     icons: [
       // "maskable" sozinho faz launchers Android/desktop aplicarem a
       // moldura de corte de segurança do maskable também no ícone normal,

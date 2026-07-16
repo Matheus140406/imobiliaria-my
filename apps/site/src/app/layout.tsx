@@ -31,8 +31,12 @@ export const metadata: Metadata = {
     "imobiliária Águas Lindas de Goiás",
     "casas à venda Águas Lindas de Goiás",
     "imóveis Águas Lindas de Goiás",
+    "apartamentos à venda Águas Lindas de Goiás",
+    "casas para alugar Águas Lindas de Goiás",
     "comprar casa Goiás",
     "alugar casa Águas Lindas",
+    "corretor de imóveis Águas Lindas de Goiás",
+    "financiamento imobiliário Goiás",
     "Imobiliária M&Y",
   ],
   authors: [{ name: SITE_NAME }],
@@ -61,7 +65,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0d1a12",
+  themeColor: "#0B2545",
 };
 
 export default function RootLayout({
