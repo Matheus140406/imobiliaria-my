@@ -19,7 +19,13 @@
   --shadow-elev: 0 20px 50px -20px rgba(11, 37, 69, 0.3);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* Dentro de @layer base (não solto no arquivo): CSS sem layer sempre vence
+   sobre @layer no Tailwind v4, então um reset solto aqui zerava margin/
+   padding mesmo em elementos com classes utilitárias tipo mx-auto/px-5 —
+   a causa real do conteúdo da página de imóvel não centralizar. */
+@layer base {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+}
 
 html { scroll-behavior: smooth; }
 

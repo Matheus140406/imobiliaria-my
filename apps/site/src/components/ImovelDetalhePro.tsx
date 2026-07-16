@@ -201,10 +201,13 @@ export function ImovelDetalhePro({
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-5 pb-20 pt-8 sm:px-10 sm:pt-14">
-        {/* Bloco de mídia instigante */}
+      <main className="mx-auto max-w-6xl px-5 pb-20 pt-8 sm:px-10 sm:pt-14">
+       <div className="lg:grid lg:grid-cols-[1.15fr_1fr] lg:items-start lg:gap-12">
+        {/* Bloco de mídia instigante — no desktop fica "grudado" (sticky) na
+            coluna esquerda enquanto a coluna de informações rola ao lado,
+            em vez de uma coluna única estreita flutuando isolada na tela. */}
         <div
-          className="group relative aspect-[4/3] w-full overflow-hidden sm:aspect-video"
+          className="group relative aspect-[4/3] w-full overflow-hidden sm:aspect-video lg:sticky lg:top-8"
           style={{
             borderRadius: 12,
             border: `1px solid ${BORDA_DOURADA}`,
@@ -268,6 +271,7 @@ export function ImovelDetalhePro({
           </span>
         </div>
 
+        <div>
         {tourAvisado && !vendida && (
           <p className="mt-3 text-center text-xs" style={{ color: DOURADO_SUAVE }}>
             O tour completo é liberado pelo corretor no WhatsApp — deixe seu contato abaixo.
@@ -400,6 +404,8 @@ export function ImovelDetalhePro({
             </>
           )}
         </div>
+        </div>
+       </div>
 
         {similares.length > 0 && (
           <div className="mt-16">
