@@ -1,4 +1,5 @@
 import { WhatsappIcon } from "./WhatsappIcon";
+import { HeroParallaxBg } from "./HeroParallaxBg";
 
 export function Hero({
   whatsappUrl,
@@ -14,13 +15,9 @@ export function Hero({
   const mostrarStats = totalDisponiveis > 0 || totalVendidos > 0;
 
   return (
-    <section className="hero" id="inicio">
-      <div
-        className="hero-bg"
-        style={
-          heroImageUrl ? { backgroundImage: `url(${heroImageUrl})` } : undefined
-        }
-      />
+    <section className="hero" id="inicio" aria-label="Início">
+      <span id="conteudo-principal" tabIndex={-1} style={{ outline: "none" }} />
+      <HeroParallaxBg imageUrl={heroImageUrl} />
       <div className="hero-overlay" />
       <div className="hero-content">
         <div className="hero-label">Imobiliária M&amp;Y • Águas Lindas de Goiás</div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./Depoimentos.module.css";
 
 const LOCAL = "Águas Lindas de Goiás, GO";
@@ -122,6 +122,8 @@ const PAUSA_APOS_CLIQUE_MS = 3500;
 export function Depoimentos() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const pausadoAteRef = useRef(0);
+  const pausadoPeloMouseRef = useRef(false);
+  const [progresso, setProgresso] = useState(0);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -135,12 +137,17 @@ export function Depoimentos() {
     let frameId: number;
 
     function tick() {
-      if (wrapper && Date.now() >= pausadoAteRef.current) {
+      if (
+        wrapper &&
+        Date.now() >= pausadoAteRef.current &&
+        !pausadoPeloMouseRef.current
+      ) {
         wrapper.scrollLeft += VELOCIDADE_PX_POR_FRAME;
         const metade = wrapper.scrollWidth / 2;
         if (wrapper.scrollLeft >= metade) {
           wrapper.scrollLeft -= metade;
         }
+        setProgresso((wrapper.scrollLeft / metade) * 100);
       }
       frameId = requestAnimationFrame(tick);
     }
@@ -176,7 +183,13 @@ export function Depoimentos() {
         </p>
       </div>
 
-      <div className={styles.carouselWrap}>
+      <div
+        className={styles.carouselWrap}
+        onMouseEnter={() => { pausadoPeloMouseRef.current = true; }}
+        onMouseLeave={() => { pausadoPeloMouseRef.current = false; }}
+        onFocus={() => { pausadoPeloMouseRef.current = true; }}
+        onBlur={() => { pausadoPeloMouseRef.current = false; }}
+      >
         <button
           type="button"
           onClick={() => mover(-1)}
@@ -190,7 +203,11 @@ export function Depoimentos() {
         <div ref={wrapperRef} className={styles.marqueeWrapper}>
           <div className={styles.marqueeTrack}>
             {DEPOIMENTOS_LOOP.map((d, i) => (
-              <div key={`${d.nome}-${i}`} className={styles.card}>
+              <div
+                key={`${d.nome}-${i}`}
+                className={styles.card}
+                style={{ "--i": i % DEPOIMENTOS.length } as React.CSSProperties}
+              >
                 <div className={styles.stars}>★★★★★</div>
                 <p className={styles.quoteText}>{d.texto}</p>
                 <div className={styles.author}>
@@ -214,6 +231,10 @@ export function Depoimentos() {
         >
           ›
         </button>
+      </div>
+
+      <div className={styles.progressTrack} aria-hidden="true">
+        <div className={styles.progressFill} style={{ width: `${progresso}%` }} />
       </div>
     </section>
   );

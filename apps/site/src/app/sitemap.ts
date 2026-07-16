@@ -22,6 +22,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 1,
     },
+    {
+      url: `${SITE_URL}/politica-de-privacidade`,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${SITE_URL}/codigo-de-defesa-do-consumidor`,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${SITE_URL}/termos-de-uso`,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
     ...imoveis,
   ];
 }

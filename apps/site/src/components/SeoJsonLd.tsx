@@ -8,17 +8,64 @@ function NegocioJsonLd({ whatsapp }: { whatsapp?: string | null }) {
     name: SITE_NAME,
     url: SITE_URL,
     image: `${SITE_URL}/icon-512.png`,
+    priceRange: "$$",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Águas Lindas de Goiás",
       addressRegion: "GO",
       addressCountry: "BR",
     },
+    // Coordenadas aproximadas do centro de Águas Lindas de Goiás — dado
+    // geográfico público, não específico de um endereço comercial real.
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: -15.7561,
+      longitude: -48.2814,
+    },
     areaServed: {
       "@type": "City",
       name: "Águas Lindas de Goiás",
     },
-    ...(whatsapp ? { telephone: whatsapp } : {}),
+    ...(whatsapp
+      ? {
+          telephone: whatsapp,
+          contactPoint: {
+            "@type": "ContactPoint",
+            telephone: whatsapp,
+            contactType: "customer service",
+            areaServed: "BR",
+            availableLanguage: "Portuguese",
+          },
+        }
+      : {}),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+function BreadcrumbJsonLd() {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Início",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Imóveis",
+        item: `${SITE_URL}/#imoveis`,
+      },
+    ],
   };
 
   return (
@@ -78,6 +125,7 @@ export function SeoJsonLd({
   return (
     <>
       <NegocioJsonLd whatsapp={whatsapp} />
+      <BreadcrumbJsonLd />
       {imoveis.map((imovel) => (
         <script
           key={imovel.id}

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { formatPreco } from "@/lib/format";
 import type { ImovelComMidias } from "@/lib/types";
 import { ContactModal } from "./ContactModal";
+import { BotaoFavorito } from "./BotaoFavorito";
 
 export function PropertyCard({
   imovel,
@@ -36,6 +37,7 @@ export function PropertyCard({
         <span className={vendida ? "imovel-badge imovel-badge-ocupada" : "imovel-badge imovel-badge-disponivel"}>
           {vendida ? "Ocupada" : "Disponível"}
         </span>
+        <BotaoFavorito imovelId={imovel.id} />
       </div>
 
       <div className="imovel-card-body">

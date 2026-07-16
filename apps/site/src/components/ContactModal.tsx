@@ -255,12 +255,14 @@ export function ContactModal({
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <label
+                      htmlFor="contato-nome"
                       className="mb-1.5 block text-xs font-medium uppercase tracking-wider"
                       style={{ color: DOURADO_SUAVE }}
                     >
                       Nome
                     </label>
                     <input
+                      id="contato-nome"
                       type="text"
                       required
                       value={nome}
@@ -271,12 +273,14 @@ export function ContactModal({
                   </div>
                   <div>
                     <label
+                      htmlFor="contato-whatsapp"
                       className="mb-1.5 block text-xs font-medium uppercase tracking-wider"
                       style={{ color: DOURADO_SUAVE }}
                     >
                       WhatsApp
                     </label>
                     <input
+                      id="contato-whatsapp"
                       type="tel"
                       required
                       value={telefone}

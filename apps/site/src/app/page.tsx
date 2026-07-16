@@ -8,7 +8,7 @@ import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { Hero } from "@/components/Hero";
 import { Sobre } from "@/components/Sobre";
 import { Servicos } from "@/components/Servicos";
-import { PropertyGrid } from "@/components/PropertyGrid";
+import { ImoveisFiltro } from "@/components/ImoveisFiltro";
 import { Depoimentos } from "@/components/Depoimentos";
 import { CtaSection } from "@/components/CtaSection";
 import { Footer } from "@/components/Footer";
@@ -56,8 +56,6 @@ export default async function Home() {
 
   const heroImageUrl = disponiveis.length > 0 ? capaDe(disponiveis[0])?.url : null;
 
-  const semImoveis = disponiveis.length === 0 && vendidos.length === 0;
-
   return (
     <>
       <SeoJsonLd
@@ -81,15 +79,13 @@ export default async function Home() {
       <Servicos />
 
       <div className="imoveis-section" id="imoveis">
-        <PropertyGrid titulo="Casas Disponíveis" imoveis={disponiveis} />
-        <div className="h-12" />
-        <PropertyGrid titulo="Casas Vendidas" imoveis={vendidos} vendida />
-
-        {semImoveis && (
-          <p className="py-16 text-center text-white/50">
-            Nenhum imóvel cadastrado ainda.
+        <div className="imoveis-header">
+          <h2 className="section-title">Imóveis</h2>
+          <p className="section-text">
+            Filtre por disponibilidade e encontre a oportunidade certa para você.
           </p>
-        )}
+        </div>
+        <ImoveisFiltro disponiveis={disponiveis} vendidos={vendidos} />
       </div>
 
       <Depoimentos />

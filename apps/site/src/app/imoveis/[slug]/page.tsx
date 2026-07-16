@@ -1,16 +1,48 @@
 import { redirect } from "next/navigation";
-import { getImovelPorSlug } from "@/lib/imoveis";
+import type { Metadata } from "next";
+import { getImovelPorSlug, getImoveisDisponiveis } from "@/lib/imoveis";
+import { formatPreco } from "@/lib/format";
+import { ImovelDetalhePro } from "@/components/ImovelDetalhePro";
+import { SeoJsonLd } from "@/components/SeoJsonLd";
 
-// Mesma razão do app/page.tsx: sem isso, essa rota pode ser cacheada pela
-// Vercel e redirecionar um visitante pra um imóvel já removido/vendido
-// como se ainda existisse.
+// Sem isso, essa rota pode ser cacheada pela Vercel e mostrar um imóvel
+// já removido/vendido como se ainda existisse, ou não refletir uma troca
+// de preço/status recente.
 export const dynamic = "force-dynamic";
 
-export default async function ImovelPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+type Params = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
+  const imovel = await getImovelPorSlug(slug);
+  if (!imovel) return {};
+
+  const capa = [...imovel.midias]
+    .filter((m) => m.tipo === "imagem")
+    .sort((a, b) => a.ordem - b.ordem)[0];
+
+  const titulo = `${imovel.titulo} — ${formatPreco(imovel.preco)}`;
+  const descricao =
+    imovel.descricao ??
+    `${imovel.titulo}${imovel.localizacao ? ` em ${imovel.localizacao}` : ""}. Oportunidade exclusiva com a Imobiliária M&Y.`;
+
+  return {
+    title: titulo,
+    description: descricao,
+    openGraph: {
+      title: titulo,
+      description: descricao,
+      ...(capa ? { images: [{ url: capa.url }] } : {}),
+    },
+    twitter: {
+      title: titulo,
+      description: descricao,
+      ...(capa ? { images: [capa.url] } : {}),
+    },
+  };
+}
+
+export default async function ImovelPage({ params }: Params) {
   const { slug } = await params;
   const imovel = await getImovelPorSlug(slug);
 
@@ -18,7 +50,15 @@ export default async function ImovelPage({
     redirect("/?imovel_indisponivel=1");
   }
 
-  // Ainda não existe uma página de detalhe dedicada: o site mostra os
-  // imóveis no túnel 3D e na grade da home. Leva o visitante direto pra lá.
-  redirect(`/#imoveis`);
+  const disponiveis = await getImoveisDisponiveis();
+  const similares = disponiveis
+    .filter((i) => i.id !== imovel.id)
+    .slice(0, 3);
+
+  return (
+    <>
+      <SeoJsonLd whatsapp={imovel.corretor?.whatsapp} imoveis={[imovel]} />
+      <ImovelDetalhePro imovel={imovel} similares={similares} />
+    </>
+  );
 }

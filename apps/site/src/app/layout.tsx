@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Lato } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { CookieConsent } from "@/components/CookieConsent";
 import { SITE_URL, SITE_NAME, SITE_DESCRICAO } from "@/lib/site";
 import "./globals.css";
 
@@ -71,7 +72,11 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${playfair.variable} ${lato.variable}`}>
       <body>
+        <a href="#conteudo-principal" className="skip-link">
+          Pular para o conteúdo
+        </a>
         {children}
+        <CookieConsent />
         <ServiceWorkerRegister />
       </body>
     </html>
