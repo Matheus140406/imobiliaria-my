@@ -7,6 +7,7 @@ import { createClient } from "@imobiliaria/db/client";
 import { whatsappLink, formatPreco } from "@/lib/format";
 import type { ImovelComMidias } from "@/lib/types";
 import { WhatsappIcon } from "./WhatsappIcon";
+import { CompartilharModal } from "./CompartilharModal";
 
 // Mensagem exata levantada pelo trigger trg_rate_limit_leads no banco
 // (private.checar_rate_limit_leads) quando o mesmo IP excede 5 envios em
@@ -91,7 +92,7 @@ export function ImovelDetalhePro({
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [tourAvisado, setTourAvisado] = useState(false);
-  const [compartilhado, setCompartilhado] = useState(false);
+  const [compartilharAberto, setCompartilharAberto] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
 
   const whatsapp = imovel.corretor?.whatsapp;
@@ -128,9 +129,11 @@ export function ImovelDetalhePro({
       return;
     }
 
-    await navigator.clipboard.writeText(url);
-    setCompartilhado(true);
-    setTimeout(() => setCompartilhado(false), 2000);
+    // Sem Web Share API (a maioria dos navegadores de desktop): em vez de só
+    // copiar o link silenciosamente, mostra um link copiável + QR code — útil
+    // pro corretor mostrar o imóvel num computador e o cliente escanear com
+    // o próprio celular na hora.
+    setCompartilharAberto(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -189,7 +192,7 @@ export function ImovelDetalhePro({
             style={{ border: `1px solid ${BORDA_DOURADA}`, color: DOURADO_SUAVE }}
           >
             <IconeCompartilhar />
-            {compartilhado ? "Link copiado" : "Compartilhar"}
+            Compartilhar
           </button>
           <Link
             href="/"
@@ -451,6 +454,14 @@ export function ImovelDetalhePro({
           </div>
         )}
       </main>
+
+      {compartilharAberto && (
+        <CompartilharModal
+          url={typeof window !== "undefined" ? window.location.href : ""}
+          titulo={imovel.titulo}
+          onClose={() => setCompartilharAberto(false)}
+        />
+      )}
     </div>
   );
 }
