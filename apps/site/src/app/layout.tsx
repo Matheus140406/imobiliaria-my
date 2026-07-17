@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Lato } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { CookieConsent } from "@/components/CookieConsent";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import { SITE_URL, SITE_NAME, SITE_DESCRICAO } from "@/lib/site";
 import "./globals.css";
 
@@ -82,6 +83,7 @@ export default function RootLayout({
         {children}
         <CookieConsent />
         <ServiceWorkerRegister />
+        <SmoothScroll />
       </body>
     </html>
   );

@@ -8,6 +8,7 @@ import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { Hero } from "@/components/Hero";
 import { Sobre } from "@/components/Sobre";
 import { Servicos } from "@/components/Servicos";
+import { ChavesParallax } from "@/components/ChavesParallax";
 import { ImoveisFiltro } from "@/components/ImoveisFiltro";
 import { Depoimentos } from "@/components/Depoimentos";
 import { CtaSection } from "@/components/CtaSection";
@@ -77,6 +78,7 @@ export default async function Home() {
 
       <Sobre />
       <Servicos />
+      <ChavesParallax whatsappUrl={whatsappGeralUrl} />
 
       <div className="imoveis-section" id="imoveis">
         <div className="imoveis-header">
