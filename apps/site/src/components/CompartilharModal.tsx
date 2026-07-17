@@ -26,6 +26,7 @@ export function CompartilharModal({
 }) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [copiado, setCopiado] = useState(false);
+  const [erroCopia, setErroCopia] = useState(false);
   const [montado, setMontado] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -42,16 +43,38 @@ export function CompartilharModal({
   }, [url]);
 
   async function copiarLink() {
+    setErroCopia(false);
     try {
       await navigator.clipboard.writeText(url);
       setCopiado(true);
       setTimeout(() => setCopiado(false), 2000);
+      return;
     } catch {
-      // Clipboard bloqueado (contexto sem permissão, iframe restrito, etc.):
-      // seleciona o texto do campo pra pelo menos permitir Ctrl+C manual em
-      // vez de falhar em silêncio sem nenhum feedback.
-      inputRef.current?.select();
+      // Clipboard API bloqueada (permissão negada, contexto sem foco, etc.)
+      // — cai pro fallback abaixo em vez de desistir em silêncio.
     }
+
+    // execCommand é deprecated mas funciona em muito mais navegadores/
+    // contextos restritos do que a Clipboard API moderna — só cai aqui
+    // quando a Clipboard API já falhou.
+    try {
+      inputRef.current?.select();
+      const copiou = document.execCommand("copy");
+      if (copiou) {
+        setCopiado(true);
+        setTimeout(() => setCopiado(false), 2000);
+        return;
+      }
+    } catch {
+      // segue pro estado de erro abaixo
+    }
+
+    // Nenhum dos dois caminhos funcionou: em vez de o botão não fazer nada
+    // visível (o que parecia "não dá pra compartilhar"), seleciona o texto
+    // e avisa que a cópia precisa ser manual.
+    inputRef.current?.select();
+    setErroCopia(true);
+    setTimeout(() => setErroCopia(false), 4000);
   }
 
   if (!montado) return null;
@@ -126,8 +149,13 @@ export function CompartilharModal({
           className="w-full rounded-lg py-3 text-sm font-bold uppercase tracking-wider text-black transition hover:brightness-110"
           style={{ background: GRADIENTE_CTA }}
         >
-          {copiado ? "Link copiado!" : "Copiar link"}
+          {copiado ? "Link copiado!" : erroCopia ? "Selecionado — use Ctrl+C" : "Copiar link"}
         </button>
+        {erroCopia && (
+          <p className="mt-2 text-xs" style={{ color: DOURADO_SUAVE }}>
+            Não conseguimos copiar automaticamente. O link já está selecionado no campo acima — use Ctrl+C (ou Cmd+C no Mac).
+          </p>
+        )}
       </div>
     </div>,
     document.body,
