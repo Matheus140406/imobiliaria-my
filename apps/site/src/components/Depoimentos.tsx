@@ -210,15 +210,25 @@ export function Depoimentos() {
               <motion.div
                 key={`${d.nome}-${i}`}
                 className={styles.card}
-                initial={reduzMovimentoPreferido ? false : { opacity: 0, y: 28, scale: 0.96 }}
+                initial={reduzMovimentoPreferido ? false : { opacity: 0, y: 22, scale: 0.97 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{
-                  duration: 0.55,
-                  ease: "easeOut",
-                  delay: (i % DEPOIMENTOS.length) * 0.04,
+                  type: "spring",
+                  stiffness: 120,
+                  damping: 16,
+                  mass: 0.7,
+                  delay: (i % DEPOIMENTOS.length) * 0.05,
                 }}
-                whileHover={reduzMovimentoPreferido ? undefined : { y: -8, scale: 1.015 }}
+                whileHover={
+                  reduzMovimentoPreferido
+                    ? undefined
+                    : {
+                        y: -6,
+                        scale: 1.02,
+                        transition: { type: "spring", stiffness: 320, damping: 20 },
+                      }
+                }
               >
                 <div className={styles.stars}>★★★★★</div>
                 <p className={styles.quoteText}>{d.texto}</p>

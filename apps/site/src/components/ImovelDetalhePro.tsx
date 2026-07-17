@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@imobiliaria/db/client";
@@ -32,14 +33,6 @@ function IconeEdificio() {
       <path d="M6 24V6l8-3.5L22 6v18" stroke={DOURADO_CLARO} strokeWidth="1.6" strokeLinejoin="round" />
       <path d="M6 24h16" stroke={DOURADO_CLARO} strokeWidth="1.6" strokeLinecap="round" />
       <path d="M10 10h2M16 10h2M10 14h2M16 14h2M10 18h2M16 18h2" stroke={DOURADO_CLARO} strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconePlay() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M8 5.5v13l11-6.5-11-6.5z" fill={DOURADO_CLARO} />
     </svg>
   );
 }
@@ -84,14 +77,14 @@ export function ImovelDetalhePro({
     () => [...imovel.midias].sort((a, b) => a.ordem - b.ordem),
     [imovel.midias],
   );
-  const capa = midiasOrdenadas.find((m) => m.tipo === "imagem") ?? midiasOrdenadas[0] ?? null;
-  const temMidiaExtra = midiasOrdenadas.length > 1;
+  const [galeriaIndex, setGaleriaIndex] = useState(0);
+  const midiaAtual = midiasOrdenadas[galeriaIndex] ?? null;
+  const temVariasMidias = midiasOrdenadas.length > 1;
 
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [tourAvisado, setTourAvisado] = useState(false);
   const [compartilharAberto, setCompartilharAberto] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -105,11 +98,12 @@ export function ImovelDetalhePro({
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
   }
 
-  function handleTourClick() {
-    // Gatilho de curiosidade: o tour/vídeo completo não abre direto — o
-    // clique leva até o formulário, que é o que de fato gera o lead.
-    setTourAvisado(true);
-    formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  function trocarMidia(e: React.MouseEvent, direcao: 1 | -1) {
+    e.preventDefault();
+    e.stopPropagation();
+    setGaleriaIndex(
+      (atual) => (atual + direcao + midiasOrdenadas.length) % midiasOrdenadas.length,
+    );
   }
 
   async function handleCompartilhar() {
@@ -217,59 +211,83 @@ export function ImovelDetalhePro({
             background: `radial-gradient(circle at 50% 40%, ${BG_FUNDO_2}, ${BG_FUNDO} 75%)`,
           }}
         >
-          {capa && capa.tipo === "imagem" ? (
-            <Image
-              src={capa.url}
-              alt={imovel.titulo}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 768px"
-              className="object-cover transition duration-700 group-hover:scale-105"
-            />
-          ) : capa && capa.tipo === "video" ? (
-            <video
-              src={capa.url}
-              className="h-full w-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls
-            />
+          {midiaAtual ? (
+            <AnimatePresence mode="wait" initial={false}>
+              {/* Mesma transição "líquida" (desfoque + leve zoom) usada no
+                  card da listagem — troca de mídia sem corte seco. */}
+              <motion.div
+                key={midiaAtual.id}
+                className="absolute inset-0"
+                initial={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 0.97, filter: "blur(6px)" }}
+                transition={{ duration: 0.45, ease: "easeInOut" }}
+              >
+                {midiaAtual.tipo === "imagem" ? (
+                  <Image
+                    src={midiaAtual.url}
+                    alt={imovel.titulo}
+                    fill
+                    priority={galeriaIndex === 0}
+                    sizes="(max-width: 768px) 100vw, 768px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <video
+                    src={midiaAtual.url}
+                    className="h-full w-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    controls
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
           ) : (
             <div className="flex h-full items-center justify-center text-4xl text-white/10">🏠</div>
           )}
 
-          {/* Vinheta pra dar profundidade e destacar o botão de play */}
+          {/* Vinheta pra dar profundidade */}
           <div
             className="pointer-events-none absolute inset-0"
             style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.45) 100%)" }}
           />
 
-          {!vendida && temMidiaExtra && (
-            <button
-              type="button"
-              onClick={handleTourClick}
-              className="absolute inset-0 flex flex-col items-center justify-center gap-3 transition"
-              aria-label="Ver tour exclusivo"
-            >
-              <span
-                className="flex h-16 w-16 items-center justify-center rounded-full backdrop-blur-sm transition group-hover:scale-110"
-                style={{
-                  background: "rgba(8,8,8,0.55)",
-                  border: `1.5px solid ${BORDA_DOURADA}`,
-                  boxShadow: "0 4px 25px rgba(178,143,71,0.35)",
-                }}
+          {temVariasMidias && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => trocarMidia(e, -1)}
+                aria-label="Mídia anterior"
+                className="absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-lg transition hover:brightness-125"
+                style={{ background: "rgba(8,8,8,0.55)", border: `1px solid ${BORDA_DOURADA}`, color: DOURADO_CLARO }}
               >
-                <IconePlay />
-              </span>
-              <span
-                className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-[2px]"
-                style={{ background: "rgba(8,8,8,0.6)", color: DOURADO_CLARO, border: `1px solid ${BORDA_DOURADA_SUTIL}` }}
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={(e) => trocarMidia(e, 1)}
+                aria-label="Próxima mídia"
+                className="absolute right-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-lg transition hover:brightness-125"
+                style={{ background: "rgba(8,8,8,0.55)", border: `1px solid ${BORDA_DOURADA}`, color: DOURADO_CLARO }}
               >
-                <IconeCadeado /> Tour Exclusivo 3D
-              </span>
-            </button>
+                ›
+              </button>
+              <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5" aria-hidden="true">
+                {midiasOrdenadas.map((m, i) => (
+                  <span
+                    key={m.id}
+                    className="h-1.5 rounded-full transition-all duration-300"
+                    style={{
+                      width: i === galeriaIndex ? "18px" : "6px",
+                      background: i === galeriaIndex ? DOURADO_CLARO : "rgba(255,255,255,0.4)",
+                    }}
+                  />
+                ))}
+              </div>
+            </>
           )}
 
           <span
@@ -285,12 +303,6 @@ export function ImovelDetalhePro({
         </div>
 
         <div>
-        {tourAvisado && !vendida && (
-          <p className="mt-3 text-center text-xs" style={{ color: DOURADO_SUAVE }}>
-            O tour completo é liberado pelo corretor no WhatsApp — deixe seu contato abaixo.
-          </p>
-        )}
-
         {/* Informações e escassez */}
         <div className="mt-10 sm:mt-14">
           <span
@@ -430,9 +442,9 @@ export function ImovelDetalhePro({
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {similares.map((s) => {
-                const capaSimilar = [...s.midias]
-                  .filter((m) => m.tipo === "imagem")
-                  .sort((a, b) => a.ordem - b.ordem)[0];
+                const midiasSimilar = [...s.midias].sort((a, b) => a.ordem - b.ordem);
+                const capaSimilar =
+                  midiasSimilar.find((m) => m.tipo === "imagem") ?? midiasSimilar[0] ?? null;
                 return (
                   <Link
                     key={s.id}
@@ -442,13 +454,23 @@ export function ImovelDetalhePro({
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       {capaSimilar ? (
-                        <Image
-                          src={capaSimilar.url}
-                          alt={s.titulo}
-                          fill
-                          sizes="(max-width: 640px) 100vw, 33vw"
-                          className="object-cover transition duration-500 group-hover:scale-105"
-                        />
+                        capaSimilar.tipo === "video" ? (
+                          <video
+                            src={capaSimilar.url}
+                            className="h-full w-full object-cover"
+                            muted
+                            playsInline
+                            preload="metadata"
+                          />
+                        ) : (
+                          <Image
+                            src={capaSimilar.url}
+                            alt={s.titulo}
+                            fill
+                            sizes="(max-width: 640px) 100vw, 33vw"
+                            className="object-cover transition duration-500 group-hover:scale-105"
+                          />
+                        )
                       ) : (
                         <div className="flex h-full items-center justify-center text-2xl text-white/10">🏠</div>
                       )}
