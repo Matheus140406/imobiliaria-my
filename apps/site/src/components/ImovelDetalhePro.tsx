@@ -226,6 +226,16 @@ export function ImovelDetalhePro({
               sizes="(max-width: 768px) 100vw, 768px"
               className="object-cover transition duration-700 group-hover:scale-105"
             />
+          ) : capa && capa.tipo === "video" ? (
+            <video
+              src={capa.url}
+              className="h-full w-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+            />
           ) : (
             <div className="flex h-full items-center justify-center text-4xl text-white/10">🏠</div>
           )}
